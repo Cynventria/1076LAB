@@ -1,3 +1,4 @@
+
 # This is a sample Python script.
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -64,31 +65,67 @@ txt.grid(row = 4, column = 1)
 
 
 
+
+
 #btn_giveup = tkinter.Button(top, text = "Show Answer", height = 1, command = lambda : option(0)).grid(row = 5, column = 1)
 #btn_renew = tkinter.Button(top, text = "New Game", height = 1, command = lambda : option(1)).grid(row = 6, column = 1)
 #btn_exit = tkinter.Button(top, text = "Exit", height = 1, command = lambda : option(2)).grid(row = 7, column = 1)
 
 def GameOver(win):
-    global  startTime, timerSt
+    global  startTime, timerSt, leaderBoard, msg
     endTime = time.perf_counter()
     consumeTime = (endTime - startTime)
+
     timerSt = False
     Timer_var.set("first guess to start")
+    rank = -10
+
+    if(len(leaderBoard) < 10):
+        rank = -1
+        leaderBoard.append([round, consumeTime, "anonymous"])
+    else:
+        if(leaderBoard[-1][0] > round):
+            rank = -1
+            leaderBoard[-1] = [round, consumeTime, "anonymous"]
+        elif(leaderBoard[-1][0] == round and leaderBoard[-1][1] > consumeTime):
+            rank = -1
+            leaderBoard[-1] = [round, consumeTime, "anonymous"]
+
+    def takeKey(elem):
+        return elem[0]*10000000 + elem[1]
+
+    leaderBoard.sort(key=takeKey)
+
+    if(rank == -1):
+        rank = leaderBoard.index([round, consumeTime, "anonymous"])+1
+
+
+
 
     startTime = 0
     msg = tkinter.Tk()
     if(win):
 
         label_R = tkinter.Label(msg, text = "time : " + str("{:.2f}".format(consumeTime))).grid(row = 1, column = 1)
-        label_Msg = tkinter.Label(msg, text = "You are " + " " +" place.  Enter your name and submit").grid(row = 2, column = 1)
-        inputName = tkinter.Entry(msg)
-        inputName.grid(row=3, column=1)
-        btn_Submit = tkinter.Button(msg, text = "submit", height = 1, command = lambda: option(3)).grid(row = 4, column = 1)
+        if(rank != -10):
+            label_Msg = tkinter.Label(msg, text = "You are " + str(rank) + " " +" place.  Enter your name and submit").grid(row = 2, column = 1)
+            inputName = tkinter.Entry(msg)
+            inputName.grid(row=3, column=1)
+            btn_Submit = tkinter.Button(msg, text = "submit", height = 1, command = lambda: submitName()).grid(row = 4, column = 1)
 
+            def submitName():
+                leaderBoard[rank-1][2] = inputName.get()
+                option(3)
 
-    btn_renew = tkinter.Button(msg, text="New Game", height=1, command=lambda: option(1)).grid(row=5, column=1)
-    btn_exit = tkinter.Button(msg, text="Exit", height=1, command=lambda: option(2)).grid(row=6, column=1)
+    def optionInMSG(op):
+        option(op)
+        msg.destroy()
+
+    btn_renew = tkinter.Button(msg, text="New Game", height=1, command=lambda: optionInMSG(1)).grid(row=5, column=1)
+    btn_exit = tkinter.Button(msg, text="Exit", height=1, command=lambda: optionInMSG(2)).grid(row=6, column=1)
     msg.mainloop()
+
+
 
 def RUN():
     global ans, round, record, timerSt, startTime
@@ -150,12 +187,8 @@ def RUN():
 
 
 
-
-
-
-
 def option(op):
-    global ans, round, record, timerSt, startTime
+    global ans, round, record, timerSt, startTime, msg
 
     if(op == 0):
         txt.insert("end", "Ans: " + str(ans[0]) + str(ans[1]) + str(ans[2]) + str(ans[3]) + "\n")
@@ -176,9 +209,15 @@ def option(op):
         timerSt = False
         startTime = 0
 
+
         return
     elif(op == 2):
         exit()
+    elif(op == 3):
+        for id, val in enumerate(leaderBoard):
+            txt.insert("end", "rank "+ str(id+1) + "    Name: " + val[2] + "    Round: " + str(val[0]-1) + "    Time: " + str("{:.2f}".format(val[1])) + '\n')
+
+
 
 
 
