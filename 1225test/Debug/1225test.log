@@ -1,0 +1,6 @@
+﻿  arm.cpp
+  test.cpp
+d:\opencv\build\install\include\opencv2\calib3d.hpp : warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+c:\program files (x86)\intel realsense sdk 2.0\include\librealsense2\h\rs_option.h : warning C4819: 檔案含有無法在目前字碼頁 (950) 中表示的字元。請以 Unicode 格式儲存檔案以防止資料遺失
+  正在產生程式碼...
+opencv_world349d.lib(opencv_world349d.dll) : fatal error LNK1112: 模組電腦類型 'x64' 與目標電腦類型 'x86' 衝突
